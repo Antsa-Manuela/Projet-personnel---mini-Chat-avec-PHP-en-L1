@@ -1,0 +1,218 @@
+login.php
+
+<fieldset>
+    <legend><h2>Se connecter</h2></legend>
+    S'inscrire <a href="signin.php?id=ici">ici</a>
+    <form action="users.php" method="post">
+        <input type="text" name="email" placeholder="E-mail"><br>
+        <input type="password" name="mdp" placeholder="Mot de passe"><br>
+        <input type="submit" value="Se connecter">
+    </form>
+</fieldset>
+
+
+users.php
+
+<?php
+    //Démarrer la session
+    session_start();
+    include('database.php');
+    if (!empty($_POST)) {
+        if (isset($_POST["email"], $_POST["mdp"]) && !empty($_POST["email"]) && !empty($_POST["mdp"]) ){
+            $email = $_POST['email'];
+            $password = $_POST['mdp'];
+            $requete = $bdd->query("SELECT * FROM users WHERE email = '".$email."' AND password = '".$password."'");
+            $i=0;
+            while ($donnees=$requete->fetch()) {
+                //On stocke dans $_SESSION les informations de l'utilisateur
+                $_SESSION["email"]=$donnees["email"];
+                $_SESSION["number"]=$donnees["number"];
+                $_SESSION["pseudo"]=$donnees["pseudo"];
+                $_SESSION["mdp"]=$donnees["password"];
+                $i++;
+            }
+            if ($i==1) {/* 
+                header("Location:home.php"); */
+                header("Location:chat.php");
+            }
+            else {
+                header ("Location:createaccount.php");
+            }
+
+            //connecter l'utilisateur
+
+        }
+        else {
+            die("Le formulaire est incomplet");
+        }
+    }
+?>
+
+
+signin.php
+
+<link rel="stylesheet" href="styles/style_signin.css">
+<div class="header">
+<?php
+    include('header.php');
+?>
+<fieldset>
+    <legend><h2>Inscription</h2></legend>
+    Se connecter <a href="index.php?id=ici">ici</a>
+    <form action="addusers.php" method="post">
+        <input type="text" name="email" placeholder="E-mail"><br>
+        <input type="tel" name="number" placeholder="Tel"><br>
+        <input type="text" name="pseudo" placeholder="Pseudo"><br>
+        <input type="password" name="mdp" placeholder="Mot de passe"><br>
+        <input type="submit" value="Se connecter">
+    </form>
+</fieldset>
+</div>
+<?php
+    include('footer.php');
+?>
+
+
+addusers.php
+
+<?php
+    //Démarrer la session
+    session_start();
+    include('database.php');
+    if (!empty($_POST)) {
+        if (isset($_POST["email"], $_POST["number"], $_POST["pseudo"], $_POST["mdp"]) && !empty($_POST["email"]) && !empty($_POST["number"]) && !empty($_POST["pseudo"]) && !empty($_POST["mdp"]) ){
+            $email = $_POST['email'];
+            $number = $_POST['number'];
+            $pseudo = $_POST['pseudo'];
+            $password = $_POST['mdp'];
+            //Ajouter ici les contrôles souhaités
+            $rqt=$bdd->query("INSERT INTO users (email, number, pseudo, password) VALUES('".$email."', '".$number."', '".$pseudo."', '".$password."')");
+            /* header('Location:signin.php'); */
+            //On récupère l'id du nouvel l'utilisateur
+            $id = $bdd->lastInsertId();
+            //connecter l'utilisateur
+            //On stocke dans $_SESSION les informations de l'utilisateur (facultatif?)
+            $_SESSION["utilisateurs"]= [
+                "id" => $id,
+                "email" => $_POST["email"],
+                "number" => $_POST["number"],
+                "pseudo" => $_POST["pseudo"],
+            ];
+            $id = $bdd->lastInsertId();
+            header('Location:index.php');
+        }
+        else {
+            die("Le formulaire est incomplet");
+        }
+    }
+    $rqt=$bdd->query("INSERT INTO chat (pseudo) VALUES (".$pseudo.")");
+?>
+
+
+chat.php
+
+<link rel="stylesheet" href="styles/style_chat.css">
+<div class="header">
+<?php
+    include('logo.php');
+    include('nav.php');
+?>
+</div>
+<hr>
+<!-- style="border: solid 1px #00cc66;" -->
+<?php
+    include('profile.php');
+?>
+
+<?php
+/*     include('footer.php'); */
+    if (isset($_SESSION['pseudo'])) {
+        # code...
+    
+?>
+<!-- <hr> -->
+<br>
+<br>
+<br>
+<div class="chat">
+
+<form action="sendmessage.php" method="post">
+<span class="send">
+<!--     <label for="pseudo">Pseudo:</label>
+    <input type="text" name="pseudo" id="pseudo" value="<?php  ?>"> -->
+</span>
+<br>
+<hr>
+
+<?php
+
+    include('database.php');
+    $selection = $bdd->query("SELECT id_chat, pseudo, message FROM chat");
+    $donnees=$selection->fetch();
+    while ($donnees=$selection->fetch()){
+        echo "<br><p class=\"sms\">De <span class=\"envoyeur\">".$donnees["pseudo"]."</span>: ".$donnees["message"]."</p>";
+    }
+?>
+<br>
+<hr>
+<br>
+<?php
+    }
+    else {
+        header('Location:index.php');
+    }
+?>
+
+</div>
+
+<span class="envoie">
+    <input type="text" name="message" placeholder="Insérer votre message">
+    <input type="submit" value="Send">
+</span>
+</form>
+<br>
+<script>
+    
+</script>
+
+
+sendmessage.php
+
+<?php
+    include('database.php');
+    $email = $_POST['email'];
+    $number = $_POST['number'];
+    $pseudo = $_POST['pseudo'];
+    $password = $_POST['mdp'];
+    //Ajouter ici les contrôles souhaités
+    $rqt=$bdd->query("INSERT INTO users (email, number, pseudo, password) VALUES('".$email."', '".$number."', '".$pseudo."', '".$password."')");
+    /* header('Location:signin.php'); */
+    //On récupère l'id du nouvel l'utilisateur
+    $id = $bdd->lastInsertId();
+    $pseudo = $_POST['pseudo'];
+    $message = $_POST['message'];
+
+    //Ajouter ici les contrôles souhaités
+
+    $rkt=$bdd->query("INSERT INTO chat (pseudo, message) VALUES('".$pseudo."', '".$message."')");
+/*     $rqet=$bdd->query("INSERT INTO chat (id_chat, pseudo, message) VALUES ('',".$pseudo.",'".$message."')"); */
+    header("Location:chat.php");
+?>
+
+
+
+database.php
+
+<?php
+    try {
+        $bdd = new PDO('mysql:host=localhost;dbname=my_projet','root','');
+    } catch (Exeption $e) {
+        die('erreur:'.$e->getMessage());
+    }
+?>
+
+
+
+_____________________________________
+
+Pouvez vous trouvez le probleme? quand j'envoie un message, le nom de l'utilisateur ne s'affiche jamais

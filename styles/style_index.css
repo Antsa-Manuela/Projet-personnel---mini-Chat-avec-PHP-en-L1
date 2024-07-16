@@ -1,0 +1,74 @@
+*{
+    font-family: 'Century Gothic';
+    color: white;
+}
+body{
+    background-color: #00121f;
+}
+hr{
+    border: solid 1px #00cc6600;
+}
+header{
+/*     border: solid 1px black; */
+    padding: 1vw;
+    margin: 3vw 1vw 1vw 1vw;
+    width: 45vw;
+    text-align: right;
+    font-size: xx-large;
+    line-height: 0.5;
+    font-weight: lighter;
+}
+.welcome{
+    font-weight: lighter;
+    color: #ffffff;
+}
+.logo{
+    font-weight: lighter;
+    color: #00cc66;
+}
+legend{
+    text-align: center;
+}
+h2{
+    color: #00cc66;
+    font-weight: lighter;
+}
+a{
+    text-decoration: none;
+    font-weight: bold;
+    color: #00cc66;
+}
+fieldset{
+    border: solid 1px grey;
+    border-radius: 0.5vw;
+    padding: 1vw;
+    margin: 0vw 20vw 0vw 1vw;
+    width: 20vw;
+    text-align: center;
+    font-size: large;
+}
+form{
+    margin-top: 2vw;
+}
+input{
+    border: none;
+    border-bottom: 1px solid grey;
+    margin: 0.5vw 0vw 0.5vw 0vw;
+    background-color: transparent;
+
+}
+input[type='submit']{
+    border: none;
+    background-color: #008f47;
+    border-radius: 2vw;
+    padding: 0.5vw 1vw 0.5vw 1vw;;
+}
+.header{
+    display: flex;
+    margin:  13vw 0vw 10vw 0vw;;
+}
+.footer{
+    position: absolute;
+    bottom: 0%;
+    right: 2.5%;
+}
